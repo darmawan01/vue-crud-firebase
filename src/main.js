@@ -1,5 +1,3 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
 import router from './router'
@@ -34,6 +32,11 @@ new Vue({
       projectId: 'test-41180',
       storageBucket: 'test-41180.appspot.com',
       messagingSenderId: '792936312744'
+    })
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.$store.dispatch('autoSignIn', user)
+      }
     })
     this.$store.dispatch('loadMeetup')
   }

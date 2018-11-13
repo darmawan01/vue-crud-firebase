@@ -21,15 +21,11 @@
             @blur="$v.location.$touch()"
           ></v-text-field>
           <v-flex>
-            <img :src="src" height="300" width="100%">
-            <v-text-field
-              v-model="src"
-              :error-messages="srcErrors"
-              label="Image URL"
-              required
-              @input="$v.src.$touch()"
-              @blur="$v.src.$touch()"
-            ></v-text-field>
+            <img :src="src" width="75" height="75">
+          </v-flex>
+          <v-flex>
+            <v-btn color="primary" @click="uploadImg">Upload Image</v-btn>
+            <input type="file" style="display: none" ref="inputImg" accept="image/*" @change="fileInmputed">
           </v-flex>
           <v-textarea
             v-model="desc"
@@ -126,7 +122,8 @@
       date: new Date().toISOString().substr(0, 10),
       time: null,
       menu: false,
-      menus: false
+      menus: false,
+      img: null
     }),
 
     computed: {
@@ -160,10 +157,13 @@
     methods: {
       submit () {
         this.$v.$touch()
+        if (!this.img) {
+          return alert('Image must be not empety !')
+        }
         const meetup = {
           title: this.title,
           location: this.location,
-          src: this.src,
+          src: this.img,
           desc: this.desc,
           date: this.date + ' ' + this.time
         }
@@ -181,6 +181,24 @@
         this.location = ''
         this.src = ''
         this.desc = ''
+      },
+      uploadImg () {
+        this.$refs.inputImg.click()
+      },
+      fileInmputed (event) {
+        const files = event.target.files
+        const filename = files[0].name
+        if (filename.lastIndexOf('.') <= 0) {
+          return alert('Please add a valid images !')
+        }
+
+        const fileReader = new FileReader()
+        fileReader.addEventListener('load', () => {
+          this.src = fileReader.result
+        })
+
+        fileReader.readAsDataURL(files[0])
+        this.img = files[0]
       }
     }
   }
